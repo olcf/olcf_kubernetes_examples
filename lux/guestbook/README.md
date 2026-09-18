@@ -33,4 +33,4 @@ service
 kubectl port-forward services/frontend 8899:80
 ```
 
-Then in your browser, go to `localhost:8899`.
+Then in your browser, go to `localhost:8899` to view the guestbook in the browser.

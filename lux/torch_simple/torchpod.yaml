@@ -6,8 +6,9 @@ spec:
   containers:
   - image: "docker.io/subilabrahamornl/sampletorch:latest"
     name: gpu-pod
-    command: ["/bin/bash"]
-    args: ["-c", "sleep", "infinity"]
+    workingDir: /root
+    command: ["python3"]
+    args: ["torch_mnist.py"]
     resources:
       limits:
         amd.com/gpu: 1
