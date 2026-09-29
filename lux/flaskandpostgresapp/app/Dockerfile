@@ -4,8 +4,9 @@ WORKDIR /app
 
 COPY requirements.txt .
 COPY app.py .
-COPY templates .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN mkdir /app/templates
+COPY templates/index.html /app/templates
+RUN  pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
 

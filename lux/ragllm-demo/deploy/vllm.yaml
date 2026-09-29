@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: vllm-cache
 spec:
-  storageClassName: netapp-block
+  storageClassName: netapp-file
   accessModes:
     - ReadWriteOnce
   resources:
@@ -43,7 +43,7 @@ spec:
             - containerPort: 8000
           resources:
             limits:
-              nvidia.com/gpu: 1
+              amd.com/gpu: 1
           startupProbe:
             httpGet:
               path: /health

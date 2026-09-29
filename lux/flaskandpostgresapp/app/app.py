@@ -1,6 +1,6 @@
 import os
 import time
-from flask import Flask, request, jsonify, render_template_string, render_template
+from flask import Flask, request, jsonify, render_template
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
