@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: torch-jobs
+  labels:
+    app: torch-jobs
+spec:
+  completions: 7
+  parallelism: 3
+  template:
+    spec:
+      containers:
+      - image: "docker.io/subilabrahamornl/sampletorch:latest"
+        name: gpu-pod
+        workingDir: /root
+        command: ["python"]
+        args: ["torch_mnist.py"]
+        envFrom:
+          - secretRef:
+              name: postgres-secrets
+        env:
+          - name: POSTGRES_HOST
+            value: postgres
+        resources:
+          limits:
+            amd.com/gpu: 1
+          requests:
+            amd.com/gpu: 1
+      restartPolicy: Never

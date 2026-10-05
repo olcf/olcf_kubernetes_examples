@@ -28,10 +28,10 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: pgvector/pgvector:0.8.6-pg18-trixie
+          image: postgres:18
           envFrom:
             - secretRef:
-                name: rag-database
+                name: postgres-secrets
           ports:
             - containerPort: 5432
           readinessProbe:

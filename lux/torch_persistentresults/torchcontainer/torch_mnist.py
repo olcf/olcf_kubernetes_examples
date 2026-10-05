@@ -8,19 +8,15 @@ from torch.optim.lr_scheduler import StepLR
 from torchvision import datasets, transforms
 
 import os
-
 import psycopg
-from pgvector.psycopg import register_vector
 
-def connect(use_vectors=False):
+def connect():
     connection = psycopg.connect(
         host=os.getenv("POSTGRES_HOST", "postgres"),
         dbname=os.environ["POSTGRES_DB"],
         user=os.environ["POSTGRES_USER"],
         password=os.environ["POSTGRES_PASSWORD"],
     )
-    if use_vectors:
-        register_vector(connection)
     return connection
 
 
@@ -35,6 +31,20 @@ def initialize_database():
             )
             """
         )
+#        connection.execute(
+#                """
+#                CREATE TABLE IF NOT EXISTS hyperparameters (
+#                id SERIAL PRIMARY KEY,
+#                batchsize INT,
+#                epochs INT,
+#                learning_rate REAL,
+#                gamma REAL,
+#                executed BOOLEAN
+#                )
+#                """
+#                )
+
+
 
 def record_log(log):
 
@@ -44,6 +54,9 @@ def record_log(log):
                 "INSERT INTO torchlogs (date, log) VALUES (%s, %s)",
                 (today, log))
         connection.commit()
+
+#def retrieve_parameters_from_db():
+#    with connect() as connection:
 
 
 
@@ -186,6 +199,7 @@ def main():
         "--save-model", action="store_true", help="for Saving the current Model"
     )
     args = parser.parse_args()
+    #batch_size,epochs,learning_rate,gamma = retrieve_parameters_from_db()
 
     if args.accel:
         device = torch.accelerator.current_accelerator()
