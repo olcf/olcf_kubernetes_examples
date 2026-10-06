@@ -6,7 +6,7 @@ COPY requirements.txt .
 COPY app.py .
 RUN mkdir /app/templates
 COPY templates/index.html /app/templates
-RUN  pip install --no-cache-dir -r requirements.txt
+RUN  pip install gunicorn "psycopg[binary]" Flask
 
 EXPOSE 5000
 
