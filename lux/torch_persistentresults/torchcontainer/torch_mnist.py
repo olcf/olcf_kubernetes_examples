@@ -1,5 +1,6 @@
 import argparse
 
+from datetime import datetime
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -8,29 +9,33 @@ from torch.optim.lr_scheduler import StepLR
 from torchvision import datasets, transforms
 
 import os
-import psycopg2
+import psycopg
+
 
 def connect():
-    connection = psycopg2.connect(
+    return psycopg.connect(
         host=os.getenv("POSTGRES_HOST", "postgres"),
         dbname=os.environ["POSTGRES_DB"],
+        port=os.getnenv("POSTGRES_PORT", 5432),
         user=os.environ["POSTGRES_USER"],
         password=os.environ["POSTGRES_PASSWORD"],
     )
-    return connection
 
 
 def initialize_database():
-    with connect() as connection:
-        connection.execute(
-            """
+    connection = connect()
+    with connection.cursor() as cursor:
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS torchlogs (
                 id SERIAL PRIMARY KEY,
                 date TEXT NOT NULL,
                 log TEXT NOT NULL,
             )
-            """
-        )
+            """)
+    connection.commit()
+    connection.close()
+
+
 #        connection.execute(
 #                """
 #                CREATE TABLE IF NOT EXISTS hyperparameters (
@@ -45,19 +50,20 @@ def initialize_database():
 #                )
 
 
-
 def record_log(log):
 
-    today = datetime.today().strftime('%Y-%m-%dT%H:%M:%S')
-    with connect() as connection:
-        connection.execute(
-                "INSERT INTO torchlogs (date, log) VALUES (%s, %s)",
-                (today, log))
-        connection.commit()
+    today = datetime.today().strftime("%Y-%m-%dT%H:%M:%S")
+    connection = connect()
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "INSERT INTO torchlogs (date, log) VALUES (%s, %s)", (today, log)
+        )
+    connection.commit()
+    connection.close()
 
-#def retrieve_parameters_from_db():
+
+# def retrieve_parameters_from_db():
 #    with connect() as connection:
-
 
 
 class Net(nn.Module):
@@ -134,11 +140,11 @@ def test(args, model, device, test_loader):
     test_loss /= len(test_loader.dataset)
 
     log = "\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n".format(
-            test_loss,
-            correct,
-            len(test_loader.dataset),
-            100.0 * correct / len(test_loader.dataset),
-        )
+        test_loss,
+        correct,
+        len(test_loader.dataset),
+        100.0 * correct / len(test_loader.dataset),
+    )
     print(log)
     record_log(log)
 
@@ -199,7 +205,7 @@ def main():
         "--save-model", action="store_true", help="for Saving the current Model"
     )
     args = parser.parse_args()
-    #batch_size,epochs,learning_rate,gamma = retrieve_parameters_from_db()
+    # batch_size,epochs,learning_rate,gamma = retrieve_parameters_from_db()
 
     if args.accel:
         device = torch.accelerator.current_accelerator()
