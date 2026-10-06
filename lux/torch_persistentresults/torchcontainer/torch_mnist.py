@@ -8,10 +8,10 @@ from torch.optim.lr_scheduler import StepLR
 from torchvision import datasets, transforms
 
 import os
-import psycopg
+import psycopg2
 
 def connect():
-    connection = psycopg.connect(
+    connection = psycopg2.connect(
         host=os.getenv("POSTGRES_HOST", "postgres"),
         dbname=os.environ["POSTGRES_DB"],
         user=os.environ["POSTGRES_USER"],

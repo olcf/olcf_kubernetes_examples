@@ -15,3 +15,22 @@ kubectl -n <your namespace> create secret generic postgres-secrets \
   --from-literal=POSTGRES_USER=torch_user \
   --from-literal=POSTGRES_PASSWORD='change-me'
 ```
+
+Build the images
+```
+cd flaskfrontend
+# can use podman too. If building on a lux login node, use `podman build --net=host`
+docker build -t harbor.ccs.ornl.gov/subil/flask-torchresults:latest .
+cd ../torchcontaner
+docker build -t docker.io/subilabrahamornl/torchjob:latest .
+```
+
+Deploy the database first
+```
+kubectl apply -f postgres.yaml
+```
+
+Deploy the Torch Jobs next
+```
+kubectl apply -f torchjob.yaml
+```
