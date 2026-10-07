@@ -6,15 +6,15 @@ metadata:
   labels:
     app: torch-jobs
 spec:
-  completions: 1
-  parallelism: 1
+  completions: 7
+  parallelism: 3
   template:
     spec:
       containers:
         - image: "harbor.ccs.ornl.gov/subil/torchjob:latest"
           name: gpu-pod
-          command: ["/bin/bash"]
-          args: ["-c", "sleep 10000"]
+          #command: ["/bin/bash"]
+          #args: ["-c", "sleep 10000"]
           envFrom:
             - secretRef:
                 name: postgres-secrets
@@ -32,4 +32,3 @@ spec:
       restartPolicy: Never
       imagePullSecrets: 
         - name: harbor-pull-secret
- 

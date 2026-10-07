@@ -15,15 +15,14 @@ spec:
     spec:
       containers:
         - name: flask-app
-          image: harbor.ccs.ornl.gov/subil/flask-torchresults:latest
+          image: "harbor.ccs.ornl.gov/subil/flask-torchresults:latest"
           ports:
             - containerPort: 8000
           envFrom:
             - secretRef:
                 name: postgres-secrets
-          env:
-            - name: POSTGRES_HOST
-              value: postgres
+            - configMapRef:
+                name: postgres-config
 ---
 apiVersion: v1
 kind: Service

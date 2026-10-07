@@ -60,6 +60,7 @@ def record_log(log):
         )
     connection.commit()
     connection.close()
+    print(f"Recorded log {today}")
 
 
 # def retrieve_parameters_from_db():

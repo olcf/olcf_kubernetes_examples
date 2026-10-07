@@ -10,6 +10,7 @@ def connect():
     connection = psycopg.connect(
         host=os.getenv("POSTGRES_HOST", "postgres"),
         dbname=os.environ["POSTGRES_DB"],
+        port=os.getenv("POSTGRES_PORT", "5432"),
         user=os.environ["POSTGRES_USER"],
         password=os.environ["POSTGRES_PASSWORD"],
     )
