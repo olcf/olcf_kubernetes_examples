@@ -9,7 +9,7 @@ multiple Kubernetes features (PVCs, Deployments, Jobs, Services, HTTPRoutes, pus
 Harbor) all working together in one application.
 
 ## Build and Deploy
-Create secrets:
+Create secrets for your Postgres database that we will be creating:
 
 ```
 kubectl -n <your namespace> create secret generic postgres-secrets \

@@ -4,4 +4,5 @@ COPY torch_mnist.py /root
 RUN pip install "psycopg[binary]==3.3.6"
 RUN python3 -c "from torchvision import datasets; datasets.MNIST('/root/data', download=True)"
 
-ENTRYPOINT ["python3", "/root/torch_mnist.py"]
+WORKDIR /root
+ENTRYPOINT ["python3", "torch_mnist.py", "--accel"]
