@@ -30,7 +30,7 @@ Deploy the database first
 kubectl apply -f postgres.yaml
 ```
 
-Deploy the Torch Jobs next
+Deconnectionploy the Torch Jobs next
 ```
 kubectl apply -f torchjob.yaml
 ```

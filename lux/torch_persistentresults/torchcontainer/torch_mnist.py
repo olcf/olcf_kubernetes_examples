@@ -29,7 +29,7 @@ def initialize_database():
             CREATE TABLE IF NOT EXISTS torchlogs (
                 id SERIAL PRIMARY KEY,
                 date TEXT NOT NULL,
-                log TEXT NOT NULL,
+                log TEXT NOT NULL
             )
             """)
     connection.commit()
