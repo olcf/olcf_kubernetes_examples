@@ -20,9 +20,6 @@ spec:
                 name: postgres-secrets
             - configMapRef:
                 name: postgres-config
-          env:
-            - name: POSTGRES_HOST
-              value: postgres
           resources:
             limits:
               amd.com/gpu: 1

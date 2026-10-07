@@ -23,6 +23,9 @@ spec:
                 name: postgres-secrets
             - configMapRef:
                 name: postgres-config
+          imagePullPolicy: Always
+      imagePullSecrets: 
+        - name: harbor-pull-secret
 ---
 apiVersion: v1
 kind: Service
