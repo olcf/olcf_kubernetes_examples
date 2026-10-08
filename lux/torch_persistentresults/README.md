@@ -62,3 +62,10 @@ Deploy these two with:
 kubectl apply -f torchjob.yaml
 kubectl apply -f flaskfrontend.yaml
 ```
+
+This will start a Job that are performing several Torch trainings with MNIST and saving the test
+accuracy result to Postgres. This will also start a Flask based frontend displaying the table of
+results saved to the Postgres database. The frontend is made visible with a HTTPRoute. See more
+about how to view the frontend in the browser in [our docs about HTTPRoute]().
+
+You can check the status of the Torch job with `kubectl get job torch-jobs`.
