@@ -14,7 +14,7 @@ to your own image.
 Take a look at the torchpod.yaml. Deploy it with:
 
 ```
-kubectl apply -f torchpod.yaml
+kubectl apply -f torchpod.yaml -n <proj>-gpu
 ```
 
 Check the status of the pod with `kubectl get pods`.
