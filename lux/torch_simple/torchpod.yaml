@@ -1,17 +1,20 @@
-apiVersion: v1
-kind: Pod
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: torch-pod
 spec:
-  containers:
-  - image: "docker.io/subilabrahamornl/sampletorch:latest"
-    name: gpu-pod
-    workingDir: /root
-    command: ["python3"]
-    args: ["torch_mnist.py"]
-    resources:
-      limits:
-        amd.com/gpu: 1
-      requests:
-        amd.com/gpu: 1
-  restartPolicy: Never
+  backoffLimit: 0
+  template:
+    spec:
+      containers:
+      - image: "docker.io/subilabrahamornl/sampletorch:latest"
+        name: gpu-pod
+        workingDir: /root
+        command: ["python3"]
+        args: ["torch_mnist.py"]
+        resources:
+          limits:
+            amd.com/gpu: 1
+          requests:
+            amd.com/gpu: 1
+      restartPolicy: Never
