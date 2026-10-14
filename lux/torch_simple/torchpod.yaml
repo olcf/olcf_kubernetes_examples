@@ -1,6 +1,8 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
+  annotations:
+    lux.olcf.ornl.gov/walltime: 60m 
   name: torch-pod
 spec:
   backoffLimit: 0
