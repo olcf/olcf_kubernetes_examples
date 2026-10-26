@@ -19,27 +19,33 @@ kubectl -n <your namespace> create secret generic postgres-secrets \
 ```
 
 
-Make sure you have set up Docker/Podman to be able to push or Harbor, [see our
-docs on how to set up credentials with Harbor, how to push images to Harbor,  a Harbor pull secret to be used by Kubernetes]().
+Make sure you have set up Docker/Podman to be able to push to Dockerhub.
 
+```
+# this will ask you to interactively enter your Dockerhub username and password
+docker login docker.io
+```
 
-Build the images. Change the full names of the images to reference the Harbor project to which you
+If you have private repositories on Dockerhub you want to use on Lux Kubernetes, [see our docs on how to set up pull
+secrets](https://docs.olcf.ornl.gov/systems/lux_user_guide.html#pull-secret-creation-for-kubernetes).
+
+Build the images. Change the full names of the images to reference the Dockerhub project to which you
 are pushing your images.
 
 ```
 cd flaskfrontend
 # can use podman too. If building on a lux login node, use `podman build --net=host`
-docker build -t harbor.ccs.ornl.gov/<your project>/flask-torchresults:latest .
-cd ../torchcontaner
-docker build -t harbor.ccs.ornl.gov/<your project>/torchjob:latest .
+docker build -t docker.io/<your username>/flask-torchresults:latest .
+cd ../torchcontaine
+docker build -t docker.io/<your username>/torchjob:latest .
 cd ..
 ```
 
-Push the images to Harbor 
+Push the images to Dockerhub
 
 ```
-docker push harbor.ccs.ornl.gov/<your project>/flask-torchresults:latest
-docker push harbor.ccs.ornl.gov/<your project>/torchjob:latest 
+docker push docker.io/<your username>/flask-torchresults:latest
+docker push docker.io/<your username>/torchjob:latest 
 ```
 
 Deploy the database first. This manifest creates a PVC, Deployment, Service, and ConfigMap. The PVC
@@ -50,9 +56,9 @@ applications deployed by other manifests.
 kubectl apply -f postgres.yaml
 ```
 
-Open `torchjob.yaml` and fix the `image:` URL to point to the image you pushed to Harbor. Also make
-sure the `imagePullSecrets` references the correct secret that you created earlier on Rancher for
-Harbor image pulls.
+Open `torchjob.yaml` and fix the `image:` URL to point to the image you pushed to Dockerhub. Also make
+sure the `imagePullSecrets` references the correct secret that you [created earlier on Rancher for
+Harbor image pulls]() (if you are using a private repository on Dockerhub).
 
 Do the same thing for `flaskfrontend.yaml`.
 
@@ -66,6 +72,6 @@ kubectl apply -f flaskfrontend.yaml
 This will start a Job that are performing several Torch trainings with MNIST and saving the test
 accuracy result to Postgres. This will also start a Flask based frontend displaying the table of
 results saved to the Postgres database. The frontend is made visible with a HTTPRoute. See more
-about how to view the frontend in the browser in [our docs about HTTPRoute]().
+about how to view the frontend in the browser in [our docs about HTTPRoute](https://docs.olcf.ornl.gov/systems/lux_user_guide.html#httproutes-for-accessing-your-app-via-the-browser).
 
 You can check the status of the Torch job with `kubectl get job torch-jobs`.

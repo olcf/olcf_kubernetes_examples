@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: flask-torchresults
-          image: "harbor.ccs.ornl.gov/subil/flask-torchresults:latest"
+          image: "docker.io/subilabrahamornl/flask-torchresults:latest"
           ports:
             - containerPort: 8000
           envFrom:
@@ -25,7 +25,7 @@ spec:
                 name: postgres-config
           imagePullPolicy: Always
       imagePullSecrets: 
-        - name: harbor-pull-secret
+        - name: docker-pull-secret
 ---
 apiVersion: v1
 kind: Service

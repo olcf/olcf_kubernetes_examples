@@ -11,7 +11,7 @@ spec:
   template:
     spec:
       containers:
-        - image: "harbor.ccs.ornl.gov/subil/torchjob:latest"
+        - image: "docker.io/subilabrahamornl/torchjob:latest"
           name: gpu-pod
           workingDir: "/root"
           command: ["python3", "torch_mnist.py", "--accel"]
