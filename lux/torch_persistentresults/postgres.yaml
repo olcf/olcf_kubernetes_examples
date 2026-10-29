@@ -2,9 +2,10 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-data
-  namespace: stf007-demo-app
+  namespace: stf007-gpu
 spec:
-  storageClassName: netapp-block
+  #storageClassName: netapp-block
+  storageClassName: netapp-file # need to use netapp-file as root ends up owning the volume directory when using netapp-block (when the container runs as a user) and so postgres can't create any files. With netapp-file, the user you are running as owns the volume directory.
   accessModes:
     - ReadWriteOnce
   resources:
@@ -15,7 +16,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
-  namespace: stf007-demo-app
+  namespace: stf007-gpu
 spec:
   replicas: 1
   strategy:
@@ -34,6 +35,8 @@ spec:
           envFrom:
             - secretRef:
                 name: postgres-secrets
+            - configMapRef:
+                name: postgres-config
           ports:
             - containerPort: 5432
           readinessProbe:
@@ -46,7 +49,8 @@ spec:
             periodSeconds: 5
           volumeMounts:
             - name: data
-              mountPath: /var/lib/postgresql
+              mountPath: /mnt/postgresql
+              subPath: "18/data" # due to the way Rancher is configured in how a non-root user runs the container, we need to set up the mountPath and subPath set up this way in order for the postgres process to be able to read and write to this directory. Just having mountPath alone will lead to a failure. And only having one subdirectory like "18" in subPath will also lead to failure. There needs to be at least two like "18/data" in the subPath.
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -56,7 +60,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgres
-  namespace: stf007-demo-app
+  namespace: stf007-gpu
 spec:
   selector:
     app: postgres
@@ -68,7 +72,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: postgres-config
-  namespace: stf007-demo-app
+  namespace: stf007-gpu
 data:
   POSTGRES_HOST: "postgres"
   POSTGRES_PORT: "5432"
+  PGDATA: "/mnt/postgresql/18/data" # make sure PGDATA matches the directory that you are setting up in the volumeMounts for the postgres storage location.
+  #PGDATA: "/var/lib/postgresql/data"
