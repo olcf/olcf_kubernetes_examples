@@ -58,7 +58,7 @@ kubectl apply -f postgres.yaml
 
 Open `torchjob.yaml` and fix the `image:` URL to point to the image you pushed to Dockerhub. Also make
 sure the `imagePullSecrets` references the correct secret that you [created earlier on Rancher for
-Harbor image pulls]() (if you are using a private repository on Dockerhub).
+Dockerhub image pulls](https://docs.olcf.ornl.gov/systems/lux_user_guide.html#pull-secret-creation-for-kubernetes) (if you are using a private repository on Dockerhub).
 
 Do the same thing for `flaskfrontend.yaml`.
 

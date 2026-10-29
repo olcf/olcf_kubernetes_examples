@@ -2,7 +2,9 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: torch-jobs
-  namespace: stf007-demo-app
+  namespace: stf007-gpu
+  annotations:
+    lux.olcf.ornl.gov/walltime: 10m
   labels:
     app: torch-jobs
 spec:
@@ -30,4 +32,4 @@ spec:
           imagePullPolicy: Always
       restartPolicy: Never
       imagePullSecrets: 
-        - name: harbor-pull-secret
+        - name: docker-pull-secret
