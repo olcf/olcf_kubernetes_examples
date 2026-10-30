@@ -8,6 +8,36 @@ This is not in anyway a realistic task. This is merely to serve as an example sh
 multiple Kubernetes features (PVCs, Deployments, Jobs, Services, HTTPRoutes, pushing and pulling images with
 Harbor) all working together in one application.
 
+### Note about PVCs
+
+Lux provides two storage classes - `netapp-block` and `netapp-file`. If you create a PVC with
+`netapp-block` and set it up as a volumeMount in your Pod like so
+
+```
+volumeMounts:
+  - name: data
+    mountPath: /mnt/postgresql
+```
+
+with the volume `data` coming from your PVC
+
+```
+volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: postgres-data
+```
+
+The directory `/mnt/postgresql` is created and owned by `root` (but the user within your running
+container is your project's automation user `abc123_auser` where `abc123` is your actual project
+name). This directory does not have write permissions for users other than root. So you will not
+actually be able to write any data to this directory.
+
+
+However, if you create this same volume with a PVC that uses `netapp-file`, the directory
+`/mnt/postgresql` is still owned by root but will have write permissions for non-root users instead of being read-only. 
+
+Specifically for for a Postgres database, 
 ## Build and Deploy
 Create secrets for your Postgres database that we will be creating:
 

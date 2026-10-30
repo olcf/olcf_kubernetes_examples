@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: torch-jobs
+  name: torch-jobs3
   namespace: stf007-gpu
   annotations:
     lux.olcf.ornl.gov/walltime: 10m
@@ -15,7 +15,7 @@ spec:
       containers:
         - image: "docker.io/subilabrahamornl/torchjob:latest"
           name: gpu-pod
-          workingDir: "/root"
+          workingDir: "/opt"
           command: ["python3", "torch_mnist.py", "--accel"]
           #command: ["/bin/bash"]
           #args: ["-c", "sleep 10000"]

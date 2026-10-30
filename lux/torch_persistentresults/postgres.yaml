@@ -50,7 +50,7 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /mnt/postgresql
-              subPath: "18/data" # due to the way Rancher is configured in how a non-root user runs the container, we need to set up the mountPath and subPath set up this way in order for the postgres process to be able to read and write to this directory. Just having mountPath alone will lead to a failure. And only having one subdirectory like "18" in subPath will also lead to failure. There needs to be at least two like "18/data" in the subPath.
+              #subPath: "18" # due to the way Rancher is configured in how a non-root user runs the container, we need to set up the mountPath and subPath set up this way in order for the postgres process to be able to read and write to this directory. Just having mountPath alone will lead to a failure. And only having one subdirectory like "18" in subPath will also lead to failure. There needs to be at least two like "18/data" in the subPath.
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -76,5 +76,5 @@ metadata:
 data:
   POSTGRES_HOST: "postgres"
   POSTGRES_PORT: "5432"
-  PGDATA: "/mnt/postgresql/18/data" # make sure PGDATA matches the directory that you are setting up in the volumeMounts for the postgres storage location.
+  PGDATA: "/mnt/postgresql/18" # make sure PGDATA matches the directory that you are setting up in the volumeMounts for the postgres storage location.
   #PGDATA: "/var/lib/postgresql/data"
