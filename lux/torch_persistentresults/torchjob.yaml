@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: torch-jobs3
+  name: torch-jobs
   namespace: stf007-gpu
   annotations:
     lux.olcf.ornl.gov/walltime: 10m
