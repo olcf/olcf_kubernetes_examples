@@ -33,3 +33,12 @@ spec:
       restartPolicy: Never
       imagePullSecrets: 
         - name: docker-pull-secret
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: stf007-gpu
+data:
+  POSTGRES_HOST: "postgres.stf007-cpu.svc.cluster.local" # we need to use the full name to reach the service that lives in the CPU namespace
+  POSTGRES_PORT: "5432"
