@@ -35,7 +35,6 @@ metadata:
   labels:
     app: flask-torchresults
 spec:
-  type: NodePort
   selector:
     app: flask-torchresults
   ports:
