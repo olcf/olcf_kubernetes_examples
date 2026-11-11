@@ -2,6 +2,7 @@ apiVersion: apps/v1 #  for k8s versions before 1.9.0 use apps/v1beta2  and befor
 kind: Deployment
 metadata:
   name: redis-replica
+  namespace: stf007-cpu
 spec:
   selector:
     matchLabels:
@@ -19,7 +20,7 @@ spec:
       containers:
       - name: slave
         image: docker.io/redis:latest
-        command: redis-server
+        command: ["redis-server"]
         args: ["--slaveof", "redis-master", "6379"]
         resources:
           requests:
