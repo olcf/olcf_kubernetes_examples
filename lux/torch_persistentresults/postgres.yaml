@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data
+  namespace: stf007-cpu
+spec:
+  storageClassName: netapp-block
+  #storageClassName: netapp-file
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: stf007-cpu
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      securityContext:
+        fsGroup: 999 # needed for write permissions to be added for gid 999 for the volume we mount
+      containers:
+        - name: postgres
+          image: postgres:18
+          securityContext:
+            runAsUser: 999
+          envFrom:
+            - secretRef:
+                name: postgres-secrets
+            - configMapRef:
+                name: postgres-config
+          ports:
+            - containerPort: 5432
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql # the default directory used by postgresql for storing db files. You can set a different directory by specifying a different alue here and specifying PGDATA: <that directory> in the ConfigMap
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgres-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: stf007-cpu
+spec:
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: stf007-gpu
+data:
+  POSTGRES_HOST: "postgres"
+  POSTGRES_PORT: "5432"
+  #PGDATA: /some/directory/path # if you want to specify a different directory for postgres data

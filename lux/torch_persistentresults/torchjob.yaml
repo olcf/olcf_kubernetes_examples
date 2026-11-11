@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: torch-jobs
+  namespace: stf007-gpu
+  annotations:
+    lux.olcf.ornl.gov/walltime: 10m
+  labels:
+    app: torch-jobs
+spec:
+  completions: 7
+  parallelism: 3
+  template:
+    spec:
+      containers:
+        - image: "docker.io/subilabrahamornl/torchjob:latest"
+          name: gpu-pod
+          workingDir: "/opt"
+          command: ["python3", "torch_mnist.py", "--accel"]
+          #command: ["/bin/bash"]
+          #args: ["-c", "sleep 10000"]
+          envFrom:
+            - secretRef:
+                name: postgres-secrets
+            - configMapRef:
+                name: postgres-config
+          resources:
+            limits:
+              amd.com/gpu: 1
+            requests:
+              amd.com/gpu: 1
+          imagePullPolicy: Always
+      restartPolicy: Never
+      imagePullSecrets: 
+        - name: docker-pull-secret
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: stf007-gpu
+data:
+  POSTGRES_HOST: "postgres.stf007-cpu.svc.cluster.local" # we need to use the full name to reach the service that lives in the CPU namespace
+  POSTGRES_PORT: "5432"

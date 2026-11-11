@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-torchresults
+  namespace: stf007-cpu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-torchresults
+  template:
+    metadata:
+      labels:
+        app: flask-torchresults
+    spec:
+      containers:
+        - name: flask-torchresults
+          image: "docker.io/subilabrahamornl/flask-torchresults:latest"
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: postgres-secrets
+            - configMapRef:
+                name: postgres-config
+          imagePullPolicy: Always
+      imagePullSecrets: 
+        - name: docker-pull-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-torchresults
+  namespace: stf007-cpu
+  labels:
+    app: flask-torchresults
+spec:
+  selector:
+    app: flask-torchresults
+  ports:
+    - port: 8000
+      targetPort: 8000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: flask-torchresults
+  namespace: stf007-cpu
+  labels:
+    app: flask-torchresults
+spec:
+  hostnames:
+    - flask-torchresults.apps.lux.olcf.ornl.gov
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: cluster-ingress-gateway
+      namespace: istio-gateway
+  rules:
+    - backendRefs:
+        - kind: Service
+          name: flask-torchresults 
+          port: 8000
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
