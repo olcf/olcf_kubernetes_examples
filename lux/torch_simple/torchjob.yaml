@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: stf007-gpu
+  annotations:
+    lux.olcf.ornl.gov/walltime: 60m
+  name: torch-job-simple
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      containers:
+        - image: "docker.io/subilabrahamornl/sampletorch:latest"
+          name: gpu-pod
+          command: ["python3", "torch_mnist.py", "--accel"]
+          resources:
+            limits:
+              amd.com/gpu: 1
+            requests:
+              amd.com/gpu: 1
+      restartPolicy: Never
