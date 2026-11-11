@@ -1,6 +1,8 @@
-FROM  docker.io/rocm/pytorch:rocm7.14.1_ubuntu26.04_py3.14_pytorch_release_2.12.0
+FROM docker.io/rocm/pytorch:rocm10.1.0_ubuntu26.04_py3.14_pytorch_release_2.14.0
 
-COPY torch_mnist.py /root
-COPY data /root/data
+COPY torch_mnist.py /opt
 
-ENTRYPOINT ["python3", "/root/torch_mnist.py"]
+
+RUN python3 -c "from torchvision import datasets; datasets.MNIST('/opt/data', download=True)"
+WORKDIR /opt
+ENTRYPOINT ["python3", "torch_mnist.py", "--accel"]
