@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: mysql-poc
+data:
+  MYSQL_CHARSET: "utf8mb4"
+  MYSQL_COLLATION: "utf8mb4_unicode_ci"
+  MYSQL_MAX_CONNECTIONS: "100"
